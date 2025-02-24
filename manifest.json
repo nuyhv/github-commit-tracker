@@ -5,10 +5,10 @@
   "permissions": ["storage", "alarms", "scripting"],
   "host_permissions": ["https://github.com/*"],
   "background": {
-    "service_worker": "background.js"
+    "service_worker": "src/background.ts"
   },
   "action": {
-    "default_popup": "popup.html",
+    "default_popup": "src/popup/popup.html",
     "default_icon": {
       "16": "icons/icon.png",
       "48": "icons/icon.png",
@@ -18,7 +18,7 @@
   "content_scripts": [
     {
       "matches": ["https://github.com/*"],
-      "js": ["content.js"]
+      "js": ["src/content.ts"]
     }
   ]
 }
