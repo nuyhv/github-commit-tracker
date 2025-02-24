@@ -1,0 +1,14 @@
+{
+  "manifest_version": 3,
+  "name": "GitHub Commit Tracker",
+  "version": "1.0",
+  "permissions": ["storage", "alarms", "scripting"],
+  "host_permissions": ["https://github.com/*"],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_popup": "src/popup/popup.html",
+    "default_icon": {}
+  }
+}

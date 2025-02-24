@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-import "../index.css";
+import ReactDOM from "react-dom/client";
+import "./popup.css";
 import ContributionGrid from "../components/ContributionGrid";
 import { fetchContributionData } from "../utils/github";
 
@@ -78,3 +79,4 @@ const Popup = () => {
 };
 
 export default Popup;
+ReactDOM.createRoot(document.getElementById("root")!).render(<Popup />);
