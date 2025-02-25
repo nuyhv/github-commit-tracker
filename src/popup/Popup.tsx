@@ -60,7 +60,7 @@ const Popup = () => {
       />
       <button
         onClick={handleSaveUsername}
-        className="mt-2 w-full bg-blue-500 hover:bg-blue-600 text-white p-2 rounded transition"
+        className="mt-2 w-full bg-blue-500 hover:bg-blue-600 text-white p-2 rounded transition cursor-pointer"
       >
         저장
       </button>

@@ -32,10 +32,16 @@ const DiscordWebhook = () => {
         value={webhookUrl}
         onChange={(e) => setWebhookUrl(e.target.value)}
       />
-      <button className="bg-blue-500 text-white p-2 mt-2 w-full" onClick={saveWebhookUrl}>
+      <button
+        className="bg-blue-500 hover:bg-blue-600 text-white p-2 mt-2 w-full rounded transition cursor-pointer"
+        onClick={saveWebhookUrl}
+      >
         저장
       </button>
-      <button className="bg-green-500 text-white p-2 mt-2 w-full" onClick={sendNow}>
+      <button
+        className="bg-green-500 hover:bg-green-600 text-white p-2 mt-2 w-full rounded transition cursor-pointer"
+        onClick={sendNow}
+      >
         지금 보내기
       </button>
     </div>
