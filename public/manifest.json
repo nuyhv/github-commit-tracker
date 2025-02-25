@@ -5,7 +5,8 @@
   "permissions": ["storage", "alarms", "scripting"],
   "host_permissions": ["https://github.com/*"],
   "background": {
-    "service_worker": "background.js"
+    "service_worker": "background.js",
+    "type": "module"
   },
   "action": {
     "default_popup": "src/popup/popup.html",
