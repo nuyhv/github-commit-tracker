@@ -19,41 +19,36 @@ interface ContributionData {
 export const fetchContributionData = async (username: string): Promise<ContributionData> => {
   try {
     const response = await fetch(`https://api.github.com/users/${username}/events`);
-    const data: GitHubEvent[] = await response.json(); // GitHubEvent 배열 타입으로 응답 데이터 받기
 
-    const today = new Date();
-    const todayDateString = today.toISOString().split("T")[0]; // "YYYY-MM-DD" 형식으로 오늘 날짜 계산
+    if (!response.ok) throw new Error(`GitHub API Error: ${response.status}`);
 
-    const contributions: Contribution[] = [];
+    const data: GitHubEvent[] = await response.json();
 
-    // 'PushEvent'만 필터링해서 기여 정보 추출
-    data
-      .filter((event) => event.type === "PushEvent") // PushEvent만 필터링
-      .forEach((event) => {
+    const today = new Date().toISOString().split("T")[0]; // "YYYY-MM-DD" 형식으로 오늘 날짜 계산
+
+    // PushEvent만 필터링하고 날짜별 커밋 개수를 집계
+    const contributions = data
+      .filter((event) => event.type === "PushEvent")
+      .reduce<Record<string, number>>((acc, event) => {
         const eventDate = event.created_at.split("T")[0]; // "YYYY-MM-DD"
-        const existingContribution = contributions.find(
-          (contribution) => contribution.date === eventDate
-        );
+        acc[eventDate] = (acc[eventDate] || 0) + event.payload.size;
+        return acc;
+      }, {});
 
-        if (existingContribution) {
-          existingContribution.count += event.payload.size; // 같은 날짜의 커밋 개수 합산
-        } else {
-          contributions.push({
-            date: eventDate,
-            count: event.payload.size, // 새 날짜에는 커밋 개수 설정
-          });
-        }
-      });
+    // 오늘의 커밋량 가져오기
+    const totalCommitsToday = contributions[today] || 0;
 
-    // 오늘의 커밋량 출력
-    const todayContributions = contributions.find(
-      (contribution) => contribution.date === todayDateString
+    // 배열 형태로 변환
+    const contributionsArray: Contribution[] = Object.entries(contributions).map(
+      ([date, count]) => ({
+        date,
+        count,
+      })
     );
-    const totalCommitsToday = todayContributions ? todayContributions.count : 0;
 
-    return { contributions, totalCommitsToday };
+    return { contributions: contributionsArray, totalCommitsToday };
   } catch (error) {
-    console.error("Failed to fetch contribution data:", error);
+    console.error("❌ Failed to fetch contribution data:", error);
     return { contributions: [], totalCommitsToday: 0 };
   }
 };
