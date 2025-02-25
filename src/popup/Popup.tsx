@@ -3,6 +3,7 @@ import ReactDOM from "react-dom/client";
 import "./popup.css";
 import ContributionGrid from "../components/ContributionGrid";
 import { fetchContributionData } from "../utils/github";
+import DiscordWebhook from "../components/DiscordWebhook";
 
 const Popup = () => {
   const [githubUsername, setGithubUsername] = useState("");
@@ -73,6 +74,7 @@ const Popup = () => {
         )}
       </div>
       <ContributionGrid contributions={contributions} />
+      <DiscordWebhook />
     </div>
   );
 };
