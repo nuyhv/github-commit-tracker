@@ -6,8 +6,8 @@ import { fetchContributionData } from "../utils/github";
 
 const Popup = () => {
   const [githubUsername, setGithubUsername] = useState("");
-  const [commitCount, setCommitCount] = useState<number | null>(null);
-  const [contributions, setContributions] = useState<{ date: string; count: number }[]>([]);
+  const [commitCount, setCommitCount] = useState<number | null>(null); // 오늘의 커밋 수
+  const [contributions, setContributions] = useState<{ date: string; count: number }[]>([]); // 커밋 데이터
 
   // 저장된 GitHub 계정 불러오기
   useEffect(() => {
@@ -34,14 +34,13 @@ const Popup = () => {
   // GitHub Contribution 데이터 가져오기
   const fetchCommitData = async (username: string) => {
     try {
-      const contributionsData = await fetchContributionData(username);
+      const { contributions: contributionsData, totalCommitsToday } = await fetchContributionData(
+        username
+      );
       setContributions(contributionsData);
 
-      if (contributionsData.length > 0) {
-        setCommitCount(contributionsData[contributionsData.length - 1].count);
-      } else {
-        setCommitCount(0);
-      }
+      // 오늘의 커밋 수 설정
+      setCommitCount(totalCommitsToday);
     } catch (error) {
       console.error("Failed to fetch commit data:", error);
       setCommitCount(null);
