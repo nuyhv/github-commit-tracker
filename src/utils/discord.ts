@@ -10,7 +10,7 @@ export async function sendCommitCountToDiscord(
 
   const payload = {
     username: "GitHub Commit Tracker",
-    content: `📢 **${username}** 님의 오늘 커밋 수: **${commitCount}** 🔥`,
+    content: `📢 **${username}** 님의 오늘 심은 잔디 수: **${commitCount}** 🟩`,
   };
 
   try {
