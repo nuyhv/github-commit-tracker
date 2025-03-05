@@ -24,7 +24,7 @@ const DiscordWebhook = () => {
 
   return (
     <div className="mt-4">
-      <h2 className="text-lg font-bold">디스코드 웹훅 설정</h2>
+      <h2 className="text-lg font-bold text-center">디스코드 웹훅 설정</h2>
       <input
         type="text"
         className="w-full border p-2 mt-2"
