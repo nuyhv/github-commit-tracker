@@ -12,6 +12,7 @@ const Popup = () => {
   const [contributions, setContributions] = useState<{ date: string; count: number }[]>([]); // 커밋 데이터
   const [lastUpdate, setlastUpdate] = useState<string | null>(null); // 커밋 데이터
   const [isSetting, setIsSetting] = useState<boolean>(false);
+  const [avatar, setAvatar] = useState<string | undefined>();
 
   // 저장된 GitHub 계정 불러오기
   useEffect(() => {
@@ -47,9 +48,12 @@ const Popup = () => {
         contributions: contributionsData,
         totalCommitsToday,
         lastUpdated,
+        avatarURL,
       } = await fetchContributionData(username);
       setContributions(contributionsData);
 
+      // 아바타 설정
+      setAvatar(avatarURL);
       // 오늘의 커밋 수 설정
       setCommitCount(totalCommitsToday);
       setlastUpdate(lastUpdated);
@@ -82,6 +86,15 @@ const Popup = () => {
       </header>
       {!isSetting ? (
         <>
+          {/* github avatar url */}
+          <div className="flex flex-col justify-center items-center gap-2">
+            <div className="rounded-full overflow-hidden w-20 h-20 border-4">
+              <img src={avatar} className="" />
+            </div>
+            <div className="text-center text-sm">
+              <strong>{githubUsername}님</strong>, 환영합니다!
+            </div>
+          </div>
           <input
             type="text"
             value={githubUsername}
