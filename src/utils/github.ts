@@ -14,6 +14,7 @@ interface GitHubEvent {
 interface ContributionData {
   contributions: Contribution[];
   totalCommitsToday: number;
+  lastUpdated: string | null; // 마지막 업데이트 시간 추가
 }
 
 export const fetchContributionData = async (username: string): Promise<ContributionData> => {
@@ -25,6 +26,7 @@ export const fetchContributionData = async (username: string): Promise<Contribut
     const data: GitHubEvent[] = await response.json();
 
     const today = new Date().toISOString().split("T")[0]; // "YYYY-MM-DD" 형식으로 오늘 날짜 계산
+    let lastUpdated: string | null = null; // 마지막 업데이트 시간
 
     // PushEvent만 필터링하고 날짜별 커밋 개수를 집계
     const contributions = data
@@ -32,6 +34,10 @@ export const fetchContributionData = async (username: string): Promise<Contribut
       .reduce<Record<string, number>>((acc, event) => {
         const eventDate = event.created_at.split("T")[0]; // "YYYY-MM-DD"
         acc[eventDate] = (acc[eventDate] || 0) + event.payload.size;
+
+        if (!lastUpdated || new Date(event.created_at) > new Date(lastUpdated)) {
+          lastUpdated = event.created_at;
+        }
         return acc;
       }, {});
 
@@ -46,9 +52,9 @@ export const fetchContributionData = async (username: string): Promise<Contribut
       })
     );
 
-    return { contributions: contributionsArray, totalCommitsToday };
+    return { contributions: contributionsArray, totalCommitsToday, lastUpdated };
   } catch (error) {
     console.error("❌ Failed to fetch contribution data:", error);
-    return { contributions: [], totalCommitsToday: 0 };
+    return { contributions: [], totalCommitsToday: 0, lastUpdated: null };
   }
 };
