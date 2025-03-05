@@ -4,11 +4,13 @@ import "./popup.css";
 import ContributionGrid from "../components/ContributionGrid";
 import { fetchContributionData } from "../utils/github";
 import DiscordWebhook from "../components/DiscordWebhook";
+import { transformDate } from "../utils/transformDate";
 
 const Popup = () => {
   const [githubUsername, setGithubUsername] = useState("");
   const [commitCount, setCommitCount] = useState<number | null>(null); // 오늘의 커밋 수
   const [contributions, setContributions] = useState<{ date: string; count: number }[]>([]); // 커밋 데이터
+  const [lastUpdate, setlastUpdate] = useState<string | null>(null); // 커밋 데이터
 
   // 저장된 GitHub 계정 불러오기
   useEffect(() => {
@@ -35,13 +37,16 @@ const Popup = () => {
   // GitHub Contribution 데이터 가져오기
   const fetchCommitData = async (username: string) => {
     try {
-      const { contributions: contributionsData, totalCommitsToday } = await fetchContributionData(
-        username
-      );
+      const {
+        contributions: contributionsData,
+        totalCommitsToday,
+        lastUpdated,
+      } = await fetchContributionData(username);
       setContributions(contributionsData);
 
       // 오늘의 커밋 수 설정
       setCommitCount(totalCommitsToday);
+      setlastUpdate(lastUpdated);
     } catch (error) {
       console.error("Failed to fetch commit data:", error);
       setCommitCount(null);
@@ -66,9 +71,21 @@ const Popup = () => {
       </button>
       <div className="mt-4 text-center">
         {commitCount !== null ? (
-          <p className="text-gray-700">
-            오늘의 커밋: <strong>{commitCount}개</strong>
-          </p>
+          <>
+            <p className="text-gray-700">
+              {lastUpdate ? (
+                <>
+                  최근 갱신: <strong>{String(transformDate(lastUpdate))}</strong>
+                </>
+              ) : (
+                "최근 90일 이내 활동이 없습니다."
+              )}
+            </p>
+            <p className="text-gray-700">
+              오늘의 커밋: <strong>{commitCount}개</strong>
+            </p>
+            <p className="text-gray-500 text-xs">공개(public) 레포지토리 기준입니다.</p>
+          </>
         ) : (
           <p className="text-gray-500">커밋 데이터를 불러오는 중...</p>
         )}
