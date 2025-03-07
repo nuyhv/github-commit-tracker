@@ -87,7 +87,7 @@ const Popup = () => {
       {!isSetting ? (
         <>
           {/* github avatar url */}
-          <div className="flex flex-col justify-center items-center gap-2">
+          <div className="flex flex-col justify-center items-center gap-2 mt-2">
             <div className="rounded-full overflow-hidden w-20 h-20 border-4">
               <img src={avatar} className="" />
             </div>
