@@ -8,6 +8,8 @@ import { transformDate } from "../utils/transformDate";
 
 const Popup = () => {
   const [githubUsername, setGithubUsername] = useState("");
+  const [user, setUser] = useState<string | undefined>(undefined);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [commitCount, setCommitCount] = useState<number | null>(null); // 오늘의 커밋 수
   const [contributions, setContributions] = useState<{ date: string; count: number }[]>([]); // 커밋 데이터
   const [lastUpdate, setlastUpdate] = useState<string | null>(null); // 커밋 데이터
@@ -44,28 +46,33 @@ const Popup = () => {
   // GitHub Contribution 데이터 가져오기
   const fetchCommitData = async (username: string) => {
     try {
-      const {
-        contributions: contributionsData,
-        totalCommitsToday,
-        lastUpdated,
-        avatarURL,
-      } = await fetchContributionData(username);
-      setContributions(contributionsData);
+      console.log("📢 Fetch 시작:", username);
 
-      // 아바타 설정
-      setAvatar(avatarURL);
-      // 오늘의 커밋 수 설정
-      setCommitCount(totalCommitsToday);
-      setlastUpdate(lastUpdated);
+      // ✅ 반드시 await를 사용해서 Promise가 resolve될 때까지 기다리기
+      const data = await fetchContributionData(username);
+
+      console.log("✅ Fetch 성공:", data);
+
+      setContributions(data.contributions);
+      setAvatar(data.avatarURL);
+      setUser(data.userName);
+      setErrorMessage(null);
+      setCommitCount(data.totalCommitsToday);
+      setlastUpdate(data.lastUpdated);
     } catch (error) {
-      console.error("Failed to fetch commit data:", error);
+      console.error("❌ Fetch 실패:", error);
+
+      const message = error instanceof Error ? error.message : "알 수 없는 오류가 발생하였습니다.";
+      console.log("🛑 Setting error message:", message);
+
+      setErrorMessage(message);
       setCommitCount(null);
     }
   };
 
   return (
     <div className="p-4 w-72 bg-gray-100 rounded-lg shadow-md">
-      <header className="flex gap-2 items-center justify-end">
+      <header className="flex gap-2 items-center justify-end mb-3">
         <h1 className="text-lg font-bold text-center text-blue-600">GitHub Commit Tracker</h1>
         <button onClick={handleSetting} className="cursor-pointer">
           <svg
@@ -87,27 +94,20 @@ const Popup = () => {
       {!isSetting ? (
         <>
           {/* github avatar url */}
-          <div className="flex flex-col justify-center items-center gap-2 mt-2">
-            <div className="rounded-full overflow-hidden w-20 h-20 border-4">
-              <img src={avatar} className="" />
-            </div>
-            <div className="text-center text-sm">
-              <strong>{githubUsername}님</strong>, 환영합니다!
-            </div>
-          </div>
-          <input
-            type="text"
-            value={githubUsername}
-            onChange={handleUsernameChange}
-            placeholder="GitHub Username"
-            className="w-full p-2 border border-gray-300 rounded mt-2"
-          />
-          <button
-            onClick={handleSaveUsername}
-            className="mt-2 w-full bg-blue-500 hover:bg-blue-600 text-white p-2 rounded transition cursor-pointer"
-          >
-            저장
-          </button>
+          {errorMessage ? (
+            <p className="text-center font-semibold text-base">{errorMessage}</p>
+          ) : (
+            <>
+              <div className="flex flex-col justify-center items-center gap-2 mt-2">
+                <div className="rounded-full overflow-hidden w-20 h-20 border-4">
+                  <img src={avatar} className="" />
+                </div>
+                <div className="text-center text-sm">
+                  <strong>{user}님</strong>, 환영합니다!
+                </div>
+              </div>
+            </>
+          )}
           <div className="mt-4 text-center">
             {commitCount !== null ? (
               <>
@@ -130,6 +130,19 @@ const Popup = () => {
             )}
           </div>
           <ContributionGrid contributions={contributions} />
+          <input
+            type="text"
+            value={githubUsername}
+            onChange={handleUsernameChange}
+            placeholder="GitHub Username"
+            className="w-full p-2 border border-gray-300 rounded mt-2"
+          />
+          <button
+            onClick={handleSaveUsername}
+            className="mt-2 w-full bg-blue-500 hover:bg-blue-600 text-white p-2 rounded transition cursor-pointer"
+          >
+            저장
+          </button>
         </>
       ) : (
         <DiscordWebhook />
