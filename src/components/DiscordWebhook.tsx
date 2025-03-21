@@ -27,7 +27,7 @@ const DiscordWebhook = () => {
       <h2 className="text-lg font-bold text-center">디스코드 웹훅 설정</h2>
       <input
         type="text"
-        className="w-full border p-2 mt-2"
+        className="w-full p-2 border border-gray-300 rounded mt-2"
         placeholder="웹훅 URL 입력"
         value={webhookUrl}
         onChange={(e) => setWebhookUrl(e.target.value)}
