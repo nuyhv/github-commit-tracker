@@ -130,22 +130,27 @@ const Popup = () => {
             )}
           </div>
           <ContributionGrid contributions={contributions} />
-          <input
-            type="text"
-            value={githubUsername}
-            onChange={handleUsernameChange}
-            placeholder="GitHub Username"
-            className="w-full p-2 border border-gray-300 rounded mt-2"
-          />
-          <button
-            onClick={handleSaveUsername}
-            className="mt-2 w-full bg-blue-500 hover:bg-blue-600 text-white p-2 rounded transition cursor-pointer"
-          >
-            저장
-          </button>
         </>
       ) : (
-        <DiscordWebhook />
+        <>
+          <div>
+            <h2 className="text-lg font-bold text-center">깃허브 계정 설정</h2>
+            <input
+              type="text"
+              value={githubUsername}
+              onChange={handleUsernameChange}
+              placeholder="GitHub Username"
+              className="w-full p-2 border border-gray-300 rounded mt-2"
+            />
+            <button
+              onClick={handleSaveUsername}
+              className="mt-2 w-full bg-blue-500 hover:bg-blue-600 text-white p-2 rounded transition cursor-pointer"
+            >
+              저장
+            </button>
+          </div>
+          <DiscordWebhook />
+        </>
       )}
     </div>
   );
